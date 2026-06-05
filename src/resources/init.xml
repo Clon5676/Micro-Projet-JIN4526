@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Game>
+    <Food quantity="100" sprite="FoodSprite.png"/>
+    <Materials quantity="100" sprite="MaterialsSprite.png"/>
+    <Soldier quantity="50" sprite="SoldierSprite.png" available="50" health="100" moral="1" damage="1"/>
+    <Peasent quantity="50" sprite="PeasentSprite.png" available="50" health="100" moral="1" damage="1"/>
+    <Event eventList="EventList.txt"/>
+</Game>
