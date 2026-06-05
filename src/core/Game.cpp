@@ -5,4 +5,5 @@ Game::Game(pugi::xml_node node) {
     materials = Materials(node.child("Materials"));
     soldiers = Soldiers(node.child("Soldiers"));
     peasent = Peasent(node.child("Peasent"));
+    event = Event(node.child("Event"));
 }
