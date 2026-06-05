@@ -67,3 +67,4 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+/.vs/Micro-Projet-JIN4526.slnx/copilot-chat
