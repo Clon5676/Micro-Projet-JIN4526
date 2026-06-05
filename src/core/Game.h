@@ -5,17 +5,18 @@
 #include "Food.h"
 #include "Materials.h"
 #include "Peasent.h"
-#include "Soldier.h"
+#include "Soldiers.h"
+#include "pugixml.hpp"
 
 class Game {
     Food food;
     Materials materials;
-    Soldier soldier;
+    Soldiers soldiers;
     Peasent peasent;
     Event event;
 
     public:
-    Game();
+    Game(pugi::xml_node node);
     void init();
     void run();
 
