@@ -6,8 +6,8 @@
 #include <string>
 
 class Materials : public Resources {
-    public:
-    Materials(int quantity, std::string sprite) : quantity(quantity), sprite(sprite) {};
+public:
+    Materials(int quantity = 0, const std::string& sprite = "") : Resources(quantity, sprite) {}
 };
 
 #endif //MICRO_PROJET_JIN4526_MATERIALS_H

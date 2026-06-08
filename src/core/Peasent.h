@@ -7,9 +7,11 @@
 class Peasent : public Manpower {
     double productivity;
 
-    public:
-    Peasent(double productivity, int available, int health, double moral, int quantity, std::string sprite) : productivity(productivity), available(available), health(health), moral(moral), quantity(quantity), sprite(sprite) {};
-    void recolt();
+public:
+    Peasent(double productivity = 1.0, int available = 0, int health = 100, double moral = 1.0, int quantity = 0, const std::string& sprite = "")
+        : Manpower(quantity, sprite, available, health, moral), productivity(productivity) {}
+
+    int recolte() const;
     void action() override;
 };
 

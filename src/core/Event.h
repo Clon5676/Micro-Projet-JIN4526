@@ -8,8 +8,9 @@
 class Event {
     std::vector<std::string> eventList;
 
-    public:
-    void activate();
+public:
+    Event();
+    std::string activate(int day) const;
 };
 
 #endif //MICRO_PROJET_JIN4526_EVENT_H
