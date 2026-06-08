@@ -5,12 +5,19 @@
 #include <string>
 
 class Resources {
+protected:
     int quantity;
     std::string sprite;
 
-    public:
-    Resources(int quantity, std::string sprite) : quantity(quantity), sprite(sprite) {};
-    void setQuantity(int quantity) {this.quantity += quantity;}
+public:
+    Resources(int startQuantity = 0, const std::string& spriteName = "");
+
+    int getQuantity() const;
+    const std::string& getSprite() const;
+
+    void setQuantity(int newQuantity);
+    void addQuantity(int amount);
+    bool spend(int amount);
 
 };
 

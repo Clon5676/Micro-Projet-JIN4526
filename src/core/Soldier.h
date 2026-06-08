@@ -7,9 +7,11 @@
 class Soldier : public Manpower {
     double damage;
 
-    public:
-    Soldier(double damage, int available, int health, double moral, int quantity, std::string sprite) : damage(damage), available(available), health(health), moral(moral), quantity(quantity), sprite(sprite) {};
-    void battle();
+public:
+    Soldier(double damage = 1.0, int available = 0, int health = 100, double moral = 1.0, int quantity = 0, const std::string& sprite = "")
+        : Manpower(quantity, sprite, available, health, moral), damage(damage) {}
+
+    double battle() const;
     void action() override;
 };
 
