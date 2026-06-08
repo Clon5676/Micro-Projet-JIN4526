@@ -28,8 +28,8 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(pugixml)
 
-# add_subdirectory(src/core)
-# add_subdirectory(src/main)
+add_subdirectory(src/core)
+add_subdirectory(src/main)
 
 #
 # Include GoogleTest
