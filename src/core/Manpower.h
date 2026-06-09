@@ -12,12 +12,13 @@ protected:
     double moral;
 
 public:
-    Manpower(int quantity = 0, const std::string& sprite = "", int available = 0, int health = 100, double moral = 1.0);
+    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral) {};
     virtual ~Manpower() = default;
+    Manpower() = default;
 
-    int getAvailable() const;
-    int getHealth() const;
-    double getMoral() const;
+    int getAvailable() const {return available;}
+    int getHealth() const {return health;}
+    double getMoral() const {return moral;}
 
     void addPeople(int amount);
     bool usePeople(int amount);

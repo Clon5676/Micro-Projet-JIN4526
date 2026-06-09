@@ -9,7 +9,8 @@ class Event {
     std::vector<std::string> eventList;
 
 public:
-    Event();
+    Event(std::string fichier);
+    Event() = default;
     std::string activate(int day) const;
 };
 

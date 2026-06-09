@@ -10,14 +10,15 @@ protected:
     std::string sprite;
 
 public:
-    Resources(int startQuantity = 0, const std::string& spriteName = "");
+    Resources(int startQuantity, const std::string spriteName) : quantity(startQuantity), sprite(spriteName) {};
+    Resources() = default;
 
-    int getQuantity() const;
-    const std::string& getSprite() const;
+    int getQuantity() const {return quantity;}
+    const std::string& getSprite() const {return sprite;}
 
-    void setQuantity(int newQuantity);
-    void addQuantity(int amount);
-    bool spend(int amount);
+    void setQuantity(int newQuantity) {quantity = newQuantity; if (quantity < 0) {quantity = 0;} }
+    void addQuantity(int amount) {quantity += amount;}
+    bool spend(int amount) {if (amount < 0 || quantity < amount) {return false;} quantity -= amount; return true;}
 
 };
 

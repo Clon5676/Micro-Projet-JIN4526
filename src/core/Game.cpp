@@ -1,25 +1,50 @@
 #include "Game.h"
 
+#include <iostream>
 #include <sstream>
 
-Event::Event()
-    : eventList({"A calm day begins.", "Travelers bring news from nearby farms.", "The enemy castle is quiet today."}) {
-}
+#include "pugixml.hpp"
 
 std::string Event::activate(int day) const {
     const int eventIndex = day % static_cast<int>(eventList.size());
     return eventList[eventIndex];
 }
 
-Game::Game()
-    : window(sf::VideoMode({1000, 700}), "Resource Kingdom"),
-      food(100, "FoodSprite.png"),
-      materials(80, "MaterialsSprite.png"),
-      soldier(2.0, 8, 100, 1.0, 8, "SoldierSprite.png"),
-      peasent(1.5, 15, 100, 1.0, 15, "PeasentSprite.png"),
-      day(1),
-      enemyHealth(120),
-      message("Welcome! Choose an action with the keyboard.") {
+Game::Game(){
+
+    window = sf::RenderWindow(sf::VideoMode({1000, 700}), "Resource Kingdom");
+    day = 1;
+    enemyHealth = 120;
+    message = "Welcome! Choose an action with the keyboard.";
+
+    pugi::xml_document doc;
+    if (auto result = doc.load_file("resources/visage.xml"); !result) {
+        std::cerr << "Could not open file init.xml because " << result.description() << std::endl;
+    }
+
+    pugi::xml_node game = doc.child("Game");
+    pugi::xml_node foodNode = game.child("Food");
+    pugi::xml_node materialsNode = game.child("Materials");
+    pugi::xml_node peasantsNode = game.child("Peasants");
+    pugi::xml_node soldiersNode = game.child("Soldiers");
+    pugi::xml_node eventsNode = game.child("Events");
+
+    food = Food(foodNode.attribute("quantity").as_int(), foodNode.attribute("sprite").as_string());
+    materials = Materials(materialsNode.attribute("quantity").as_int(), materialsNode.attribute("sprite").as_string());
+    soldiers = Soldiers(soldiersNode.attribute("quantity").as_int(),
+        soldiersNode.attribute("sprite").as_string(),
+        soldiersNode.attribute("available").as_int(),
+        soldiersNode.attribute("health").as_int(),
+        soldiersNode.attribute("moral").as_double(),
+        soldiersNode.attribute("damage").as_double());
+    peasent = Peasents(peasantsNode.attribute("quantity").as_int(),
+        peasantsNode.attribute("sprite").as_string(),
+        peasantsNode.attribute("available").as_int(),
+        peasantsNode.attribute("health").as_int(),
+        peasantsNode.attribute("moral").as_double(),
+        peasantsNode.attribute("damage").as_double());
+    event = Event(eventsNode.attribute("eventList").as_string());
+
     init();
 }
 
@@ -64,7 +89,7 @@ void Game::chooseEvent(const sf::Event& currentEvent) {
     } else if (keyPressed->code == sf::Keyboard::Key::P) {
         recruitPeasant();
     } else if (keyPressed->code == sf::Keyboard::Key::S) {
-        recruitSoldier();
+        recruitSoldiers();
     } else if (keyPressed->code == sf::Keyboard::Key::A) {
         attack();
     } else if (keyPressed->code == sf::Keyboard::Key::N) {
@@ -77,7 +102,7 @@ void Game::chooseEvent(const sf::Event& currentEvent) {
 void Game::updateDay() {
     day++;
     peasent.action();
-    soldier.action();
+    soldiers.action();
     feedPeople();
 
     if (day % 3 == 0) {
@@ -97,13 +122,13 @@ void Game::draw() {
     drawText("Food: " + std::to_string(food.getQuantity()), 70, 155);
     drawText("Materials: " + std::to_string(materials.getQuantity()), 70, 195);
     drawText("Peasants: " + std::to_string(peasent.getQuantity()) + " available: " + std::to_string(peasent.getAvailable()), 70, 235);
-    drawText("Soldiers: " + std::to_string(soldier.getQuantity()) + " available: " + std::to_string(soldier.getAvailable()), 70, 275);
+    drawText("Soldiers: " + std::to_string(soldiers.getQuantity()) + " available: " + std::to_string(soldiers.getAvailable()), 70, 275);
     drawText("Enemy castle health: " + std::to_string(enemyHealth), 70, 315);
 
     drawText("F: farm food", 620, 155);
     drawText("M: mine materials", 620, 195);
     drawText("P: recruit peasant (20 food)", 620, 235);
-    drawText("S: recruit soldier (15 food, 15 materials)", 620, 275);
+    drawText("S: recruit soldiers (15 food, 15 materials)", 620, 275);
     drawText("A: attack castle", 620, 315);
     drawText("Space: feed people", 620, 355);
     drawText("N: next day", 620, 395);
@@ -129,10 +154,10 @@ void Game::drawText(const std::string& text, float x, float y, unsigned int size
 }
 
 void Game::farm() {
-    const int gainedFood = peasent.recolte();
-    food.addQuantity(gainedFood);
-    peasent.usePeople(peasent.getAvailable());
-    message = "Peasants produced " + std::to_string(gainedFood) + " food.";
+    // const int gainedFood = peasent.recolte();
+    // food.addQuantity(gainedFood);
+    // peasent.usePeople(peasent.getAvailable());
+    // message = "Peasants produced " + std::to_string(gainedFood) + " food.";
 }
 
 void Game::mine() {
@@ -151,31 +176,31 @@ void Game::recruitPeasant() {
     }
 }
 
-void Game::recruitSoldier() {
+void Game::recruitSoldiers() {
     if (food.getQuantity() < 15 || materials.getQuantity() < 15) {
-        message = "Need 15 food and 15 materials to recruit a soldier.";
+        message = "Need 15 food and 15 materials to recruit a soldiers.";
         return;
     }
 
     food.spend(15);
     materials.spend(15);
-    soldier.addPeople(1);
+    soldiers.addPeople(1);
     message = "A new soldier is ready.";
 }
 
 void Game::attack() {
-    const int damage = static_cast<int>(soldier.battle());
-    enemyHealth -= damage;
-    if (enemyHealth < 0) {
-        enemyHealth = 0;
-    }
-
-    soldier.usePeople(soldier.getAvailable());
-    message = "Your soldiers dealt " + std::to_string(damage) + " damage.";
+    // const int damage = static_cast<int>(soldiers.battle());
+    // enemyHealth -= damage;
+    // if (enemyHealth < 0) {
+    //     enemyHealth = 0;
+    // }
+    //
+    // soldiers.usePeople(soldiers.getAvailable());
+    // message = "Your soldiers dealt " + std::to_string(damage) + " damage.";
 }
 
 void Game::feedPeople() {
-    const int neededFood = peasent.getQuantity() + soldier.getQuantity();
+    const int neededFood = peasent.getQuantity() + soldiers.getQuantity();
     if (food.spend(neededFood)) {
         message = "Everyone ate. You spent " + std::to_string(neededFood) + " food.";
     } else {

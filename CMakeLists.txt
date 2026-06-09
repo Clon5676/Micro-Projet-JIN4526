@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
 include(FetchContent)
-project(CorrigeAnalyseFichierXML VERSION 1.0.0 LANGUAGES CXX)
+project(Micro-Projet-JIN4526 VERSION 1.0.0 LANGUAGES CXX)
 
 if(WIN32)
   # SonarLint support for CMake requires the following flag to be set on.
@@ -47,4 +47,4 @@ FetchContent_MakeAvailable(googletest)
 # Otherwise, Visual Studio test explorer does not see unit tests (See ticket https://developercommunity.visualstudio.com/t/No-tests-discovered-for-googletest-and-C/1148799#T-ND1150621)
 include(GoogleTest)
 enable_testing()
-#add_subdirectory(src/test)
+add_subdirectory(src/test)

@@ -8,8 +8,9 @@ class Soldiers : public Manpower {
     double damage;
 
     public:
-    Soldiers(double damage, int available, int health, double moral, int quantity, std::string sprite) : damage(damage), available(available), health(health), moral(moral), quantity(quantity), sprite(sprite) {};
-    void battle();
+    Soldiers(int quantity, std::string sprite, int available, int health, double moral, double damage)
+        : Manpower(quantity, sprite, available, health, moral), damage(damage) {};
+    Soldiers() = default;
     void action() override;
 };
 

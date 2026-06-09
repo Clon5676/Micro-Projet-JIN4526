@@ -4,8 +4,8 @@
 #include "Event.h"
 #include "Food.h"
 #include "Materials.h"
-#include "Peasent.h"
-#include "Soldier.h"
+#include "Peasents.h"
+#include "Soldiers.h"
 
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -16,8 +16,8 @@ class Game {
 
     Food food;
     Materials materials;
-    Soldier soldier;
-    Peasent peasent;
+    Soldiers soldiers;
+    Peasents peasent;
     Event event;
 
     int day;
@@ -38,7 +38,7 @@ private:
     void farm();
     void mine();
     void recruitPeasant();
-    void recruitSoldier();
+    void recruitSoldiers();
     void attack();
     void feedPeople();
 

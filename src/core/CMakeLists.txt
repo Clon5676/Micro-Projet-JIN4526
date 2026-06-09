@@ -1,6 +1,12 @@
 add_library(lib_core
   Manpower.cpp
   Game.cpp
+        ../test/UnitTestFood.cpp
+        Food.cpp
+        Soldiers.cpp
+        Peasents.cpp
+        Materials.cpp
+        Event.cpp
 )
 
 target_include_directories(lib_core PUBLIC ./)

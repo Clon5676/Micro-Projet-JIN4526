@@ -7,7 +7,8 @@
 
 class Materials : public Resources {
 public:
-    Materials(int quantity = 0, const std::string& sprite = "") : Resources(quantity, sprite) {}
+    Materials(int quantity, const std::string sprite) : Resources(quantity, sprite) {}
+    Materials() = default;
 };
 
 #endif //MICRO_PROJET_JIN4526_MATERIALS_H
