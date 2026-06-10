@@ -8,10 +8,8 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\core",
-    "\\src\\main",
-    "\\src\\resources"
+    "\\src\\core"
   ],
-  "SelectedNode": "\\src\\core",
+  "SelectedNode": "\\src\\core\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }
