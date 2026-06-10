@@ -51,9 +51,9 @@ Game::Game(){
 void Game::init() {
     window.setFramerateLimit(60);
 
-    if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-        message = "Font not found, but the game is running.";
-    }
+    // if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+    //     message = "Font not found, but the game is running.";
+    // }
 }
 
 void Game::run() {
