@@ -18,8 +18,7 @@ Game::Game(){
     message = "Welcome! Choose an action with the keyboard.";
 
     pugi::xml_document doc;
-    if (auto result = doc.load_file("resources/init.xml");
-        !result) {
+    if (auto result = doc.load_file("resources/init.xml"); !result) {
         std::cerr << "Could not open file init.xml because " << result.description() << std::endl;
     }
 
