@@ -3,7 +3,7 @@
 #include "Peasents.h"
 
 TEST(Peasents, constructor) {
-    Peasents peasents = Peasents(1.0, 100, 100, 1.0, 100, "Peasent.png");
+    Peasents peasents = Peasents(1.0,"Peasent.png", 100, 100, 1.0, 100 );
 
     ASSERT_EQ(1.0, peasents.getProductivity());
     ASSERT_EQ(100, peasents.getAvailable());
