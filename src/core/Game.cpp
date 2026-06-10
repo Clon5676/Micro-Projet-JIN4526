@@ -18,14 +18,15 @@ Game::Game(){
     message = "Welcome! Choose an action with the keyboard.";
 
     pugi::xml_document doc;
-    if (auto result = doc.load_file("resources/visage.xml"); !result) {
+    if (auto result = doc.load_file("resources/init.xml");
+        !result) {
         std::cerr << "Could not open file init.xml because " << result.description() << std::endl;
     }
 
     pugi::xml_node game = doc.child("Game");
     pugi::xml_node foodNode = game.child("Food");
     pugi::xml_node materialsNode = game.child("Materials");
-    pugi::xml_node peasantsNode = game.child("Peasants");
+    pugi::xml_node peasantsNode = game.child("Peasents");
     pugi::xml_node soldiersNode = game.child("Soldiers");
     pugi::xml_node eventsNode = game.child("Events");
 
@@ -51,9 +52,9 @@ Game::Game(){
 void Game::init() {
     window.setFramerateLimit(60);
 
-    if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-        message = "Font not found, but the game is running.";
-    }
+    // if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+    //     message = "Font not found, but the game is running.";
+    // }
 }
 
 void Game::run() {
