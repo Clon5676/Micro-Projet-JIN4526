@@ -4,9 +4,8 @@
 
 class MyFixture : public ::testing::Test {
   protected:
-      // Exécuté AVANT chaque TEST_F
+
       void SetUp() override {
-          // Initialisation (ex: créer des objets, ouvrir des fichiers)
           food = Food(100, "fichier.png");
       }
 
@@ -15,7 +14,7 @@ class MyFixture : public ::testing::Test {
       }
 
       Food food;
-  };
+};
 
 TEST(Food, constructor) {
     Food food = Food(100, "fichier.png");

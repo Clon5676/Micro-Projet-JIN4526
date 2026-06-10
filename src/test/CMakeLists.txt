@@ -7,6 +7,7 @@
 add_executable(unitTests
         UnitTestFood.cpp
         UnitTestPeasents.cpp
+        UnitTestSoldiers.cpp
 )
 target_link_libraries(unitTests PUBLIC GTest::gtest_main lib_core pugixml sfml-graphics)
 

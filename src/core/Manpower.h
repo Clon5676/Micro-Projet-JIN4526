@@ -10,9 +10,10 @@ protected:
     int available;
     int health;
     double moral;
+    bool feed;
 
 public:
-    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral) {};
+    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral), feed(false) {};
     virtual ~Manpower() = default;
     Manpower() = default;
 
@@ -23,8 +24,9 @@ public:
     void addPeople(int amount);
     bool usePeople(int amount);
     void rest();
+    void feeded() {feed = true;}
 
-    virtual void action() = 0;
+    virtual int action(int nbmanpower) = 0;
 };
 
 #endif //MICRO_PROJET_JIN4526_MANPOWER_H

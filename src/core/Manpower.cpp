@@ -22,4 +22,9 @@ bool Manpower::usePeople(int amount) {
 
 void Manpower::rest() {
     available = quantity;
+
+    if (feed) {
+        moral += 0.5;
+    }
+    feed = false;
 }

@@ -36,13 +36,13 @@ Game::Game(){
         soldiersNode.attribute("available").as_int(),
         soldiersNode.attribute("health").as_int(),
         soldiersNode.attribute("moral").as_double(),
-        soldiersNode.attribute("damage").as_double());
+        soldiersNode.attribute("strength").as_double());
     peasent = Peasents(peasantsNode.attribute("quantity").as_int(),
         peasantsNode.attribute("sprite").as_string(),
         peasantsNode.attribute("available").as_int(),
         peasantsNode.attribute("health").as_int(),
         peasantsNode.attribute("moral").as_double(),
-        peasantsNode.attribute("damage").as_double());
+        peasantsNode.attribute("productivity").as_double());
     event = Event(eventsNode.attribute("eventList").as_string());
 
     init();
@@ -51,9 +51,9 @@ Game::Game(){
 void Game::init() {
     window.setFramerateLimit(60);
 
-    // if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-    //     message = "Font not found, but the game is running.";
-    // }
+    if (!font.openFromFile("resources/arial.ttf")) {
+        message = "Font not found, but the game is running.";
+    }
 }
 
 void Game::run() {
@@ -101,9 +101,9 @@ void Game::chooseEvent(const sf::Event& currentEvent) {
 
 void Game::updateDay() {
     day++;
-    peasent.action();
-    soldiers.action();
-    feedPeople();
+    peasent.rest();
+    soldiers.rest();
+    //feedPeople();
 
     if (day % 3 == 0) {
         materials.addQuantity(10);
@@ -154,17 +154,15 @@ void Game::drawText(const std::string& text, float x, float y, unsigned int size
 }
 
 void Game::farm() {
-    // const int gainedFood = peasent.recolte();
-    // food.addQuantity(gainedFood);
-    // peasent.usePeople(peasent.getAvailable());
-    // message = "Peasants produced " + std::to_string(gainedFood) + " food.";
+    const int gainedFood = peasent.action(50);
+    food.addQuantity(gainedFood);
+    message = "Peasants produced " + std::to_string(gainedFood) + " food.";
 }
 
 void Game::mine() {
-    const int gainedMaterials = peasent.getAvailable();
-    materials.addQuantity(gainedMaterials);
-    peasent.usePeople(peasent.getAvailable());
-    message = "Peasants produced " + std::to_string(gainedMaterials) + " materials.";
+    const int gainedFood = peasent.action(50);
+    materials.addQuantity(gainedFood);
+    message = "Peasants produced " + std::to_string(gainedFood) + " food.";
 }
 
 void Game::recruitPeasant() {
@@ -189,19 +187,20 @@ void Game::recruitSoldiers() {
 }
 
 void Game::attack() {
-    // const int damage = static_cast<int>(soldiers.battle());
-    // enemyHealth -= damage;
-    // if (enemyHealth < 0) {
-    //     enemyHealth = 0;
-    // }
-    //
-    // soldiers.usePeople(soldiers.getAvailable());
-    // message = "Your soldiers dealt " + std::to_string(damage) + " damage.";
+    const int damage = soldiers.action(50);
+    enemyHealth -= damage;
+    if (enemyHealth < 0) {
+        enemyHealth = 0;
+    }
+
+    message = "Your soldiers dealt " + std::to_string(damage) + " damage.";
 }
 
 void Game::feedPeople() {
     const int neededFood = peasent.getQuantity() + soldiers.getQuantity();
     if (food.spend(neededFood)) {
+        peasent.feeded();
+        soldiers.feeded();
         message = "Everyone ate. You spent " + std::to_string(neededFood) + " food.";
     } else {
         message = "Not enough food. Morale system will be added next.";

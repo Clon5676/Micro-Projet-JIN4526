@@ -12,7 +12,7 @@ public:
         : Manpower(quantity, sprite, available, health, moral), productivity(productivity) {}
     Peasents() = default;
 
-    void action() override;
+    int action(int nbpeasents) override;
     double getProductivity() {return productivity;};
 };
 

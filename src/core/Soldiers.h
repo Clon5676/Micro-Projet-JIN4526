@@ -5,13 +5,14 @@
 #include <string>
 
 class Soldiers : public Manpower {
-    double damage;
+    double strength;
 
     public:
-    Soldiers(int quantity, std::string sprite, int available, int health, double moral, double damage)
-        : Manpower(quantity, sprite, available, health, moral), damage(damage) {};
+    Soldiers(int quantity, std::string sprite, int available, int health, double moral, double strength)
+        : Manpower(quantity, sprite, available, health, moral), strength(strength) {};
     Soldiers() = default;
-    void action() override;
+    int action(int nbsoldiers) override;
+    double getStrenght() { return strength; }
 };
 
 #endif //MICRO_PROJET_JIN4526_SOLDIER_H

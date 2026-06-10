@@ -2,7 +2,7 @@
 <Game>
     <Food quantity="100" sprite="FoodSprite.png"/>
     <Materials quantity="100" sprite="MaterialsSprite.png"/>
-    <Soldiers quantity="50" sprite="SoldierSprite.png" available="50" health="100" moral="1" damage="1"/>
+    <Soldiers quantity="50" sprite="SoldierSprite.png" available="50" health="100" moral="1" strength="1"/>
     <Peasents quantity="50" sprite="PeasentSprite.png" available="50" health="100" moral="1" productivity="1"/>
     <Events eventList="resources/EventList.txt"/>
 </Game>
