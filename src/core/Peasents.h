@@ -13,6 +13,8 @@ public:
     Peasents() = default;
 
     int action(int nbpeasents) override;
+    int farm(int nbpeasents);
+    int mine(int nbpeasents);
     double getProductivity() {return productivity;};
 };
 

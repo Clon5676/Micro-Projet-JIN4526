@@ -9,12 +9,15 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include <map>
 
 class Game {
 public:
     enum class Side { Left, Center, Right };
 
 private:
+    enum class ManpowerAction { None, Farm, Mine, Attack };
+
     struct SpriteGroup {
         std::string name;
         std::vector<int> textureIndexes;
@@ -36,7 +39,11 @@ private:
     int enemyHealth;
     std::string message;
     bool showSprites;
-    int activeSpriteGroup;
+    //int activeSpriteGroup;
+    ManpowerAction pendingAction;
+    std::string manpowerInput;
+
+    std::map<Side, int> activeSpriteGroups;
 
 public:
     Game();
@@ -50,13 +57,23 @@ private:
     void updateDay();
     void draw();
     void drawText(const std::string& text, float x, float y, unsigned int size = 22);
+    void drawManpowerPopup();
+    void startManpowerChoice(ManpowerAction action);
+    void confirmManpowerChoice();
+    void cancelManpowerChoice();
+    void handleManpowerInput(const sf::Event& currentEvent);
+    int getPendingActionMaxPeople() const;
+    std::string getPendingActionName() const;
     void loadSprites();
     void drawSprites();
     void farm();
+    void farmWithPeople(int people);
     void mine();
+    void mineWithPeople(int people);
     void recruitPeasant();
     void recruitSoldiers();
     void attack();
+    void attackWithPeople(int people);
     void feedPeople();
 
 };

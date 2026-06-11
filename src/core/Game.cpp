@@ -11,8 +11,9 @@ Game::Game(){
     day = 1;
     enemyHealth = 1000;
     message = "Welcome! Choose an action with the keyboard.";
-    showSprites = false;
-    activeSpriteGroup = -1;
+    showSprites = true;
+    //activeSpriteGroup = -1;
+    pendingAction = ManpowerAction::None;
 
     pugi::xml_document doc;
     if (auto result = doc.load_file("resources/init.xml"); !result) {
@@ -73,6 +74,11 @@ void Game::pause() {
 }
 
 void Game::chooseEvent(const sf::Event& currentEvent) {
+    if (pendingAction != ManpowerAction::None) {
+        handleManpowerInput(currentEvent);
+        return;
+    }
+
     const auto* keyPressed = currentEvent.getIf<sf::Event::KeyPressed>();
     if (keyPressed == nullptr) {
         return;
@@ -94,20 +100,11 @@ void Game::chooseEvent(const sf::Event& currentEvent) {
         updateDay();
     } else if (keyPressed->code == sf::Keyboard::Key::Space) {
         feedPeople();
-    } else if (keyPressed->code == sf::Keyboard::Key::L) {
-        showSprites = !showSprites;
-        if (showSprites) {
-            if (activeSpriteGroup == -1) {
-                showSpriteGroup("heroes", Side::Left);
-            }
-            message = "Sprites are now visible.";
-        } else {
-            message = "Sprites are now hidden.";
-        }
     }
 }
 
 void Game::updateDay() {
+    activeSpriteGroups.clear();
     day++;
     peasent.rest();
     soldiers.rest();
@@ -140,13 +137,18 @@ void Game::draw() {
     drawText("A: attack castle", 620, 315);
     drawText("Space: feed people", 620, 355);
     drawText("N: next day", 620, 395);
-    drawText("L: show/hide sprites", 620, 435);
+
+
 
     if (showSprites) {
         drawSprites();
     }
 
     drawText(message, 70, 560, 20);
+
+    if (pendingAction != ManpowerAction::None) {
+        drawManpowerPopup();
+    }
 
     if (enemyHealth <= 0) {
         drawText("Victory! The enemy castle has fallen.", 270, 480, 30);
@@ -166,11 +168,124 @@ void Game::drawText(const std::string& text, float x, float y, unsigned int size
     window.draw(drawableText);
 }
 
+void Game::drawManpowerPopup() {
+    sf::RectangleShape background({620.f, 220.f});
+    background.setPosition({190.f, 230.f});
+    background.setFillColor(sf::Color(20, 24, 30, 245));
+    background.setOutlineThickness(3.f);
+    background.setOutlineColor(sf::Color(220, 220, 220));
+    window.draw(background);
+
+    const std::string actionName = getPendingActionName();
+    const int maxPeople = getPendingActionMaxPeople();
+
+    drawText(actionName, 225, 260, 28);
+    drawText("How many people do you want to send?", 225, 310, 22);
+    drawText("Available: " + std::to_string(maxPeople), 225, 345, 20);
+    drawText("Number: " + manpowerInput, 225, 380, 24);
+    drawText("Enter: confirm    Backspace: erase    Escape: cancel", 225, 415, 18);
+}
+
+void Game::startManpowerChoice(ManpowerAction action) {
+    pendingAction = action;
+    manpowerInput = "";
+    message = "Type a number and press Enter.";
+}
+
+void Game::confirmManpowerChoice() {
+    if (manpowerInput.empty()) {
+        message = "Please type a number first.";
+        return;
+    }
+
+    const int people = std::stoi(manpowerInput);
+    const int maxPeople = getPendingActionMaxPeople();
+
+    if (people <= 0) {
+        message = "You must send at least 1 person.";
+        return;
+    }
+
+    if (people > maxPeople) {
+        message = "You only have " + std::to_string(maxPeople) + " available.";
+        return;
+    }
+
+    const ManpowerAction actionToRun = pendingAction;
+    pendingAction = ManpowerAction::None;
+    manpowerInput = "";
+
+    if (actionToRun == ManpowerAction::Farm) {
+        farmWithPeople(people);
+    } else if (actionToRun == ManpowerAction::Mine) {
+        mineWithPeople(people);
+    } else if (actionToRun == ManpowerAction::Attack) {
+        attackWithPeople(people);
+    }
+}
+
+void Game::cancelManpowerChoice() {
+    pendingAction = ManpowerAction::None;
+    manpowerInput = "";
+    message = "Action cancelled.";
+}
+
+void Game::handleManpowerInput(const sf::Event& currentEvent) {
+    const auto* keyPressed = currentEvent.getIf<sf::Event::KeyPressed>();
+    if (keyPressed != nullptr) {
+        if (keyPressed->code == sf::Keyboard::Key::Enter) {
+            confirmManpowerChoice();
+        } else if (keyPressed->code == sf::Keyboard::Key::Escape) {
+            cancelManpowerChoice();
+        } else if (keyPressed->code == sf::Keyboard::Key::Backspace && !manpowerInput.empty()) {
+            manpowerInput.pop_back();
+        }
+        return;
+    }
+
+    const auto* textEntered = currentEvent.getIf<sf::Event::TextEntered>();
+    if (textEntered == nullptr) {
+        return;
+    }
+
+    if (textEntered->unicode >= '0' && textEntered->unicode <= '9' && manpowerInput.size() < 3) {
+        manpowerInput += static_cast<char>(textEntered->unicode);
+    }
+}
+
+int Game::getPendingActionMaxPeople() const {
+    if (pendingAction == ManpowerAction::Attack) {
+        return soldiers.getAvailable();
+    }
+
+    if (pendingAction == ManpowerAction::Farm || pendingAction == ManpowerAction::Mine) {
+        return peasent.getAvailable();
+    }
+
+    return 0;
+}
+
+std::string Game::getPendingActionName() const {
+    if (pendingAction == ManpowerAction::Farm) {
+        return "Farm";
+    }
+
+    if (pendingAction == ManpowerAction::Mine) {
+        return "Mine";
+    }
+
+    if (pendingAction == ManpowerAction::Attack) {
+        return "Attack";
+    }
+
+    return "";
+}
+
 void Game::loadSprites() {
     const std::vector<std::string> spriteFiles = {
-        "resources/Sprites/CyranoDeBergerac.png",
-        "resources/Sprites/SoldatEspagnol.png",
-        "resources/Sprites/SoldatFrancais.png"
+        "resources/Sprites/CyranoDeBergerac.png", // Sprite 0
+        "resources/Sprites/SoldatEspagnol.png", // Sprite 1
+        "resources/Sprites/SoldatFrancais.png"  // Sprite 2
     };
 
     spriteTextures.clear();
@@ -191,33 +306,36 @@ void Game::loadSprites() {
     spriteGroups.push_back({"enemySoldiers", {1}, spawnPosition});
     spriteGroups.push_back({"frenchSoldiers", {2}, spawnPosition});
     spriteGroups.push_back({"battle", {1, 2}, spawnPosition});
+    spriteGroups.push_back({ "peasants", {2}, spawnPosition });
 }
 
 void Game::drawSprites() {
-    if (activeSpriteGroup < 0 || activeSpriteGroup >= static_cast<int>(spriteGroups.size())) {
-        return;
-    }
-
-    const SpriteGroup& group = spriteGroups[activeSpriteGroup];
-    const float spacing = 130.f;
-
-    for (std::size_t i = 0; i < group.textureIndexes.size(); i++) {
-        const int textureIndex = group.textureIndexes[i];
-        if (textureIndex < 0 || textureIndex >= static_cast<int>(spriteTextures.size())) {
+    for (const auto& [side, index] : activeSpriteGroups) {
+        if (index < 0 || index >= static_cast<int>(spriteGroups.size())) {
             continue;
         }
 
-        sf::Sprite sprite(spriteTextures[textureIndex]);
-        sprite.setPosition({group.position.x + spacing * static_cast<float>(i), group.position.y});
+        const SpriteGroup& group = spriteGroups[index];
+        const float spacing = 130.f;
 
-        const sf::Vector2u textureSize = spriteTextures[textureIndex].getSize();
-        if (textureSize.x > 0 && textureSize.y > 0) {
-            const float wantedHeight = 140.f;
-            const float scale = wantedHeight / static_cast<float>(textureSize.y);
-            sprite.setScale({scale, scale});
+        for (std::size_t i = 0; i < group.textureIndexes.size(); i++) {
+            const int textureIndex = group.textureIndexes[i];
+            if (textureIndex < 0 || textureIndex >= static_cast<int>(spriteTextures.size())) {
+                continue;
+            }
+
+            sf::Sprite sprite(spriteTextures[textureIndex]);
+            sprite.setPosition({group.position.x + spacing * static_cast<float>(i), group.position.y});
+
+            const sf::Vector2u textureSize = spriteTextures[textureIndex].getSize();
+            if (textureSize.x > 0 && textureSize.y > 0) {
+                const float wantedHeight = 200.f;
+                const float scale = wantedHeight / static_cast<float>(textureSize.y);
+                sprite.setScale({scale, scale});
+            }
+
+            window.draw(sprite);
         }
-
-        window.draw(sprite);
     }
 }
 
@@ -232,33 +350,46 @@ void Game::showSpriteGroup(const std::string& groupName, Side side) {
     for (std::size_t i = 0; i < spriteGroups.size(); i++) {
         if (spriteGroups[i].name == groupName) {
             spriteGroups[i].position.x = x;
-            activeSpriteGroup = static_cast<int>(i);
-            showSprites = true;
+
+            // Store this group's index for this specific side slot
+            activeSpriteGroups[side] = static_cast<int>(i);
             return;
         }
     }
 
-    std::cerr << "Unknown sprite group: " << groupName << std::endl;
+    //std::cerr << "Unknown sprite group: " << groupName << std::endl;
 }
 
 void Game::farm() {
-    const int gainedFood = peasent.action(50);
+    activeSpriteGroups.clear();
+    startManpowerChoice(ManpowerAction::Farm);
+}
+
+void Game::farmWithPeople(int people) {
+    activeSpriteGroups.clear();
+    const int gainedFood = peasent.action(people);
     food.addQuantity(gainedFood);
     message = "Peasants produced " + std::to_string(gainedFood) + " food.";
     showSpriteGroup("heroes", Side::Left);
+    showSpriteGroup("peasants", Side::Right);
 }
 
 void Game::mine() {
+    activeSpriteGroups.clear();
+    startManpowerChoice(ManpowerAction::Mine);
+}
+
+void Game::mineWithPeople(int people) {
+    activeSpriteGroups.clear();
     showSpriteGroup("heroes", Side::Left);
-    // const int gainedFood = peasent.action(50);
-    const int gainedMaterials = peasent.getAvailable();
+    showSpriteGroup("peasants", Side::Right);
+    const int gainedMaterials = peasent.action(people);
     materials.addQuantity(gainedMaterials);
-    // materials.addQuantity(gainedFood);
-    // message = "Peasants produced " + std::to_string(gainedFood) + " food.";
     message = "Peasants produced " + std::to_string(gainedMaterials) + " materials.";
 }
 
 void Game::recruitPeasant() {
+    activeSpriteGroups.clear();
     showSpriteGroup("heroes", Side::Left);
     if (food.spend(20)) {
         peasent.addPeople(1);
@@ -269,6 +400,7 @@ void Game::recruitPeasant() {
 }
 
 void Game::recruitSoldiers() {
+    activeSpriteGroups.clear();
     showSpriteGroup("frenchSoldiers", Side::Left);
     if (food.getQuantity() < 15 || materials.getQuantity() < 15) {
         message = "Need 15 food and 15 materials to recruit a soldiers.";
@@ -282,8 +414,15 @@ void Game::recruitSoldiers() {
 }
 
 void Game::attack() {
-    showSpriteGroup("battle", Side::Center);
-    const int damage = soldiers.action(50);
+    activeSpriteGroups.clear();
+    startManpowerChoice(ManpowerAction::Attack);
+}
+
+void Game::attackWithPeople(int people) {
+    activeSpriteGroups.clear();
+    showSpriteGroup("frenchSoldiers", Side::Left);
+    showSpriteGroup("enemySoldiers", Side::Right);
+    const int damage = soldiers.action(people);
     enemyHealth -= damage;
     if (enemyHealth < 0) {
         enemyHealth = 0;
@@ -293,6 +432,7 @@ void Game::attack() {
 }
 
 void Game::feedPeople() {
+    activeSpriteGroups.clear();
     const int neededFood = peasent.getQuantity() + soldiers.getQuantity();
     if (food.spend(neededFood)) {
         peasent.feeded();

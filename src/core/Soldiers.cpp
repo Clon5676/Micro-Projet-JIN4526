@@ -12,3 +12,7 @@ int Soldiers::action(int nbsoldiers) {
     }
     return 0;
 }
+
+int Soldiers::attack(int nbsoldiers) {
+    return action(nbsoldiers);
+}

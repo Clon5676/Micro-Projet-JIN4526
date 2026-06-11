@@ -13,3 +13,11 @@ int Peasents::action(int nbpeasents) {
     }
     return 0;
 }
+
+int Peasents::farm(int nbpeasents) {
+    return action(nbpeasents);
+}
+
+int Peasents::mine(int nbpeasents) {
+    return action(nbpeasents);
+}

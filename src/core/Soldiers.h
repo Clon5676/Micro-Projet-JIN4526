@@ -12,6 +12,7 @@ class Soldiers : public Manpower {
         : Manpower(quantity, sprite, available, health, moral), strength(strength) {};
     Soldiers() = default;
     int action(int nbsoldiers) override;
+    int attack(int nbsoldiers);
     double getStrenght() { return strength; }
 };
 
