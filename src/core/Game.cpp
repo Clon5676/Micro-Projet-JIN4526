@@ -5,16 +5,11 @@
 
 #include "pugixml.hpp"
 
-std::string Event::activate(int day) const {
-    const int eventIndex = day % static_cast<int>(eventList.size());
-    return eventList[eventIndex];
-}
-
 Game::Game(){
 
     window = sf::RenderWindow(sf::VideoMode({1000, 700}), "Resource Kingdom");
     day = 1;
-    enemyHealth = 120;
+    enemyHealth = 1000;
     message = "Welcome! Choose an action with the keyboard.";
 
     pugi::xml_document doc;
