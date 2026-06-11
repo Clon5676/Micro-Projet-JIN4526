@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 Event::Event(std::string fichier) {
 
     std::ifstream file(fichier);
@@ -18,4 +19,9 @@ Event::Event(std::string fichier) {
       }
 
       file.close();
+}
+
+std::string Event::activate(int day) const {
+    const int eventIndex = day % static_cast<int>(eventList.size());
+    return eventList[eventIndex];
 }
