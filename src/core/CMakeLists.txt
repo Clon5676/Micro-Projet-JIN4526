@@ -1,6 +1,9 @@
 add_library(lib_core
   Manpower.cpp
   Game.cpp
+        GameInput.cpp
+        GameActions.cpp
+        DialogueScene.cpp
         Food.cpp
         Soldiers.cpp
         Peasents.cpp
