@@ -1,8 +1,9 @@
 #include "Game.h"
-
 #include <iostream>
-
+#include <random>
+#include <sstream>
 #include "pugixml.hpp"
+#include "EventStrategy.h"
 
 Game::Game(){
 
@@ -38,7 +39,7 @@ Game::Game(){
         peasantsNode.attribute("health").as_int(),
         peasantsNode.attribute("moral").as_double(),
         peasantsNode.attribute("productivity").as_double());
-    event = Event(eventsNode.attribute("eventList").as_string());
+    event = std::make_shared<GameEvent>(eventsNode);
 
     init();
 }
@@ -70,6 +71,68 @@ void Game::run() {
 
 void Game::pause() {
     message = "Pause is planned. For now, press Escape to quit.";
+}
+
+void Game::chooseEvent(const sf::Event& currentEvent) {
+    const auto* keyPressed = currentEvent.getIf<sf::Event::KeyPressed>();
+    if (keyPressed == nullptr) {
+        return;
+    }
+
+    if (keyPressed->code == sf::Keyboard::Key::Escape) {
+        window.close();
+    } else if (keyPressed->code == sf::Keyboard::Key::F) {
+        farm();
+    } else if (keyPressed->code == sf::Keyboard::Key::M) {
+        mine();
+    } else if (keyPressed->code == sf::Keyboard::Key::P) {
+        recruitPeasant();
+    } else if (keyPressed->code == sf::Keyboard::Key::S) {
+        recruitSoldiers();
+    } else if (keyPressed->code == sf::Keyboard::Key::A) {
+        attack();
+    } else if (keyPressed->code == sf::Keyboard::Key::N) {
+        updateDay();
+    } else if (keyPressed->code == sf::Keyboard::Key::Space) {
+        feedPeople();
+    } else if (keyPressed->code == sf::Keyboard::Key::L) {
+        showSprites = !showSprites;
+        if (showSprites) {
+            if (activeSpriteGroup == -1) {
+                showSpriteGroup("heroes", Side::Left);
+            }
+            message = "Sprites are now visible.";
+        } else {
+            message = "Sprites are now hidden.";
+        }
+    }
+}
+
+void Game::updateDay() {
+    day++;
+
+    std::random_device rd;  // Source de graine aléatoire
+    std::mt19937 gen(rd()); // Moteur initialisé avec une graine aléatoire
+
+    // 2. Définir la distribution (ici, entre 1 et 7)
+    int min = 1;
+    int max = 7;
+    std::uniform_int_distribution<> distrib(min, max);
+
+    // 3. Générer un nombre aléatoire
+    int random_number = distrib(gen);
+    std::shared_ptr<GameEvent> event = this->event;
+
+    for (int i = 1; i < random_number; i++) {
+        event = event->getNextEvent();
+    }
+
+    event->getEventStrategie()->activateEvent(this, event->getValue());
+
+    message = event->getEffect();
+
+    peasent.rest();
+    soldiers.rest();
 }
 
 void Game::draw() {
@@ -115,4 +178,138 @@ void Game::drawText(const std::string& text, float x, float y, unsigned int size
     drawableText.setPosition({x, y});
     drawableText.setFillColor(sf::Color(235, 238, 242));
     window.draw(drawableText);
+}
+
+void Game::loadSprites() {
+    const std::vector<std::string> spriteFiles = {
+        "resources/Sprites/CyranoDeBergerac.png",
+        "resources/Sprites/SoldatEspagnol.png",
+        "resources/Sprites/SoldatFrancais.png"
+    };
+
+    spriteTextures.clear();
+
+    for (const std::string& fileName : spriteFiles) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(fileName)) {
+            std::cerr << "Could not load sprite: " << fileName << std::endl;
+        }
+
+        spriteTextures.push_back(texture);
+    }
+
+    const sf::Vector2f spawnPosition = {360.f, 375.f};
+
+    spriteGroups.clear();
+    spriteGroups.push_back({"heroes", {0}, spawnPosition});
+    spriteGroups.push_back({"enemySoldiers", {1}, spawnPosition});
+    spriteGroups.push_back({"frenchSoldiers", {2}, spawnPosition});
+    spriteGroups.push_back({"battle", {1, 2}, spawnPosition});
+}
+
+void Game::drawSprites() {
+    if (activeSpriteGroup < 0 || activeSpriteGroup >= static_cast<int>(spriteGroups.size())) {
+        return;
+    }
+
+    const SpriteGroup& group = spriteGroups[activeSpriteGroup];
+    const float spacing = 130.f;
+
+    for (std::size_t i = 0; i < group.textureIndexes.size(); i++) {
+        const int textureIndex = group.textureIndexes[i];
+        if (textureIndex < 0 || textureIndex >= static_cast<int>(spriteTextures.size())) {
+            continue;
+        }
+
+        sf::Sprite sprite(spriteTextures[textureIndex]);
+        sprite.setPosition({group.position.x + spacing * static_cast<float>(i), group.position.y});
+
+        const sf::Vector2u textureSize = spriteTextures[textureIndex].getSize();
+        if (textureSize.x > 0 && textureSize.y > 0) {
+            const float wantedHeight = 140.f;
+            const float scale = wantedHeight / static_cast<float>(textureSize.y);
+            sprite.setScale({scale, scale});
+        }
+
+        window.draw(sprite);
+    }
+}
+
+void Game::showSpriteGroup(const std::string& groupName, Side side) {
+    float x = 360.f; // Default Center
+    if (side == Side::Left) {
+        x = 100.f;
+    } else if (side == Side::Right) {
+        x = 700.f;
+    }
+
+    for (std::size_t i = 0; i < spriteGroups.size(); i++) {
+        if (spriteGroups[i].name == groupName) {
+            spriteGroups[i].position.x = x;
+            activeSpriteGroup = static_cast<int>(i);
+            showSprites = true;
+            return;
+        }
+    }
+
+    std::cerr << "Unknown sprite group: " << groupName << std::endl;
+}
+
+void Game::farm() {
+    const int gainedFood = peasent.action(50);
+    food.addQuantity(gainedFood);
+    message = "Peasants produced " + std::to_string(gainedFood) + " food.";
+    showSpriteGroup("heroes", Side::Left);
+}
+
+void Game::mine() {
+    showSpriteGroup("heroes", Side::Left);
+     const int gainedMaterials = peasent.action(50);
+    materials.addQuantity(gainedMaterials);
+    message = "Peasants produced " + std::to_string(gainedMaterials) + " materials.";
+}
+
+void Game::recruitPeasant() {
+    showSpriteGroup("heroes", Side::Left);
+    if (food.spend(20)) {
+        peasent.addPeople(1);
+        message = "A new peasant joined your village.";
+    } else {
+        message = "Not enough food to recruit a peasant.";
+    }
+}
+
+void Game::recruitSoldiers() {
+    showSpriteGroup("frenchSoldiers", Side::Left);
+    if (food.getQuantity() < 15 || materials.getQuantity() < 15) {
+        message = "Need 15 food and 15 materials to recruit a soldiers.";
+        return;
+    }
+
+    food.spend(15);
+    materials.spend(15);
+    soldiers.addPeople(1);
+    message = "A new soldier is ready.";
+}
+
+void Game::attack() {
+    showSpriteGroup("battle", Side::Center);
+    const int damage = soldiers.action(50);
+    enemyHealth -= damage;
+    if (enemyHealth < 0) {
+        enemyHealth = 0;
+    }
+
+    message = "Your soldiers dealt " + std::to_string(damage) + " damage.";
+}
+
+void Game::feedPeople() {
+    const int neededFood = peasent.getQuantity() + soldiers.getQuantity();
+    if (food.spend(neededFood)) {
+        peasent.feeded();
+        soldiers.feeded();
+        message = "Everyone ate. You spent " + std::to_string(neededFood) + " food.";
+    } else {
+        message = "Not enough food. Morale system will be added next.";
+    }
 }
