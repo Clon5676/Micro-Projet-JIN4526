@@ -41,6 +41,9 @@ void Manpower::rest() {
 
     if (feed) {
         moral += 0.5;
+        if (moral > 2.0) {
+            moral = 2.0;
+        }
     }
     feed = false;
 }

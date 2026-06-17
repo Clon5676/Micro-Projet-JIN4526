@@ -20,7 +20,7 @@ TEST(Food, constructor) {
     Food food = Food(100, "fichier.png");
 
     ASSERT_EQ(100, food.getQuantity());
-    ASSERT_EQ("fichier.png", food.getSprite());
+    ASSERT_EQ("Food", food.getName());
 }
 
 TEST_F(MyFixture, setQuantity) {
@@ -31,4 +31,25 @@ TEST_F(MyFixture, setQuantity) {
 TEST_F(MyFixture, addQuantity) {
     food.addQuantity(50);
     ASSERT_EQ(150, food.getQuantity());
+}
+
+TEST_F(MyFixture, setQuantityDoesNotGoBelowZero) {
+    food.setQuantity(-10);
+    ASSERT_EQ(0, food.getQuantity());
+}
+
+TEST_F(MyFixture, addQuantityDoesNotGoBelowZero) {
+    food.addQuantity(-150);
+    ASSERT_EQ(0, food.getQuantity());
+}
+
+TEST_F(MyFixture, spendRemovesQuantityWhenEnoughIsAvailable) {
+    ASSERT_TRUE(food.spend(40));
+    ASSERT_EQ(60, food.getQuantity());
+}
+
+TEST_F(MyFixture, spendFailsWhenAmountIsInvalidOrTooHigh) {
+    ASSERT_FALSE(food.spend(-1));
+    ASSERT_FALSE(food.spend(101));
+    ASSERT_EQ(100, food.getQuantity());
 }

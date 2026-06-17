@@ -8,7 +8,7 @@ void Game::updateDay() {
 
     if (day % 3 == 0) {
         materials.addQuantity(10);
-        message = event.activate(day) + " You found 10 materials.";
+        message = event.activate(day) + " You found 10 materials."; // here example of how to put message with something else
     } else {
 		message = event.activate(day); // here it calls the events that are set to happen on this day, if any
     }
