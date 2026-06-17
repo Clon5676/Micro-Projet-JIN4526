@@ -7,7 +7,7 @@
 class Food : public Resources {
 
     public:
-    Food(int quantity, std::string sprite) : Resources(quantity, sprite) {};
+    Food(int quantity, std::string sprite) : Resources(quantity, sprite, "Food") {};
     Food() = default;
     ~Food() = default;
 };

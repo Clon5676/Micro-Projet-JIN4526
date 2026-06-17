@@ -9,7 +9,6 @@ Game::Game(){
     window = sf::RenderWindow(sf::VideoMode({1300, 1000}), "Resource Kingdom");
     day = 1;
     enemyHealth = 1000;
-    //message = "Welcome! Choose an action with the keyboard.";
     pendingAction = ManpowerAction::None;
 
     pugi::xml_document doc;
@@ -26,6 +25,9 @@ Game::Game(){
 
     food = Food(foodNode.attribute("quantity").as_int(), foodNode.attribute("sprite").as_string());
     materials = Materials(materialsNode.attribute("quantity").as_int(), materialsNode.attribute("sprite").as_string());
+    stockpile = ResourcePackage("Stockpile");
+    stockpile.add(food);
+    stockpile.add(materials);
     soldiers = Soldiers(soldiersNode.attribute("quantity").as_int(),
         soldiersNode.attribute("sprite").as_string(),
         soldiersNode.attribute("available").as_int(),
@@ -80,9 +82,10 @@ void Game::draw() {
 
     drawText("Food: " + std::to_string(food.getQuantity()), 70, 155);
     drawText("Materials: " + std::to_string(materials.getQuantity()), 70, 195);
-    drawText("Peasants: " + std::to_string(peasent.getQuantity()) + " available: " + std::to_string(peasent.getAvailable()), 70, 235);
-    drawText("Soldiers: " + std::to_string(soldiers.getQuantity()) + " available: " + std::to_string(soldiers.getAvailable()), 70, 275);
-    drawText("Enemy castle health: " + std::to_string(enemyHealth), 70, 315);
+    drawText("Stockpile total: " + std::to_string(stockpile.getQuantity()), 70, 235);
+    drawText("Peasants: " + std::to_string(peasent.getQuantity()) + " available: " + std::to_string(peasent.getAvailable()), 70, 275);
+    drawText("Soldiers: " + std::to_string(soldiers.getQuantity()) + " available: " + std::to_string(soldiers.getAvailable()), 70, 315);
+    drawText("Enemy castle health: " + std::to_string(enemyHealth), 70, 355);
 
     drawText("F: farm food", 620, 155);
     drawText("M: mine materials", 620, 195);

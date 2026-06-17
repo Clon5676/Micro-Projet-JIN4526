@@ -5,6 +5,7 @@
 #include "Food.h"
 #include "Materials.h"
 #include "Peasents.h"
+#include "ResourcePackage.h"
 #include "Soldiers.h"
 
 #include <SFML/Graphics.hpp>
@@ -20,6 +21,7 @@ private:
 
     Food food;
     Materials materials;
+    ResourcePackage stockpile;
     Soldiers soldiers;
     Peasents peasent;
     Event event;

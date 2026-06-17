@@ -15,7 +15,7 @@ protected:
     int applyRandomVariation(int baseValue) const;
 
 public:
-    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral), feed(false) {};
+    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite, "Manpower"), available(available), health(health), moral(moral), feed(false) {};
     virtual ~Manpower() = default;
     Manpower() = default;
 

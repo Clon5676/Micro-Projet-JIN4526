@@ -7,7 +7,7 @@
 
 class Materials : public Resources {
 public:
-    Materials(int quantity, const std::string sprite) : Resources(quantity, sprite) {}
+    Materials(int quantity, const std::string sprite) : Resources(quantity, sprite, "Materials") {}
     Materials() = default;
 };
 

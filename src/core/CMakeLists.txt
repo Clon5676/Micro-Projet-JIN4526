@@ -1,4 +1,6 @@
 add_library(lib_core
+        Resources.cpp
+        ResourcePackage.cpp
   Manpower.cpp
   Game.cpp
         GameInput.cpp

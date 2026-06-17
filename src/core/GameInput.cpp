@@ -42,12 +42,12 @@ void Game::drawManpowerPopup() {
 void Game::startManpowerChoice(ManpowerAction action) {
     pendingAction = action;
     manpowerInput = "";
-    message = "Type a number and press Enter.";
+    //message = "Type a number and press Enter.";
 }
 
 void Game::confirmManpowerChoice() {
     if (manpowerInput.empty()) {
-        message = "Please type a number first.";
+        //message = "Please type a number first.";
         return;
     }
 
@@ -55,12 +55,12 @@ void Game::confirmManpowerChoice() {
     const int maxPeople = getPendingActionMaxPeople();
 
     if (people <= 0) {
-        message = "You must send at least 1 person.";
+        //message = "You must send at least 1 person.";
         return;
     }
 
     if (people > maxPeople) {
-        message = "You only have " + std::to_string(maxPeople) + " available.";
+        //message = "You only have " + std::to_string(maxPeople) + " available.";
         return;
     }
 
@@ -82,7 +82,7 @@ void Game::confirmManpowerChoice() {
 void Game::cancelManpowerChoice() {
     pendingAction = ManpowerAction::None;
     manpowerInput = "";
-    message = "Action cancelled.";
+    //message = "Action cancelled.";
 }
 
 void Game::handleManpowerInput(const sf::Event& currentEvent) {
