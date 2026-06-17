@@ -1,6 +1,7 @@
 #ifndef MICRO_PROJET_JIN4526_GAME_H
 #define MICRO_PROJET_JIN4526_GAME_H
 #include "GameEvent.h"
+#include "DialogueScene.h"
 #include "Food.h"
 #include "Materials.h"
 #include "Peasents.h"
@@ -8,25 +9,16 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <vector>
 
 class GameEvent;
 
 class Game {
-public:
-    enum class Side { Left, Center, Right };
-
 private:
-    struct SpriteGroup {
-        std::string name;
-        std::vector<int> textureIndexes;
-        sf::Vector2f position;
-    };
+    enum class ManpowerAction { None, Farm, Mine, Attack, RecruitSoldiers };
 
     sf::RenderWindow window;
     sf::Font font;
-    std::vector<sf::Texture> spriteTextures;
-    std::vector<SpriteGroup> spriteGroups;
+    DialogueScene dialogueScene;
 
     Food food;
     Materials materials;
@@ -37,8 +29,8 @@ private:
     int day;
     int enemyHealth;
     std::string message;
-    bool showSprites;
-    int activeSpriteGroup;
+    ManpowerAction pendingAction;
+    std::string manpowerInput;
 
 public:
     Game();
@@ -57,14 +49,27 @@ public:
 private:
     void updateDay();
     void draw();
-    void drawText(const std::string& text, float x, float y, unsigned int size = 22);
-    void loadSprites();
-    void drawSprites();
+    void drawText(const std::string& text, float x, float y, unsigned int 
+        = 22);
+    void drawManpowerPopup();
+    void startManpowerChoice(ManpowerAction action);
+    void confirmManpowerChoice();
+    void cancelManpowerChoice();
+    void handleManpowerInput(const sf::Event& currentEvent);
+    int getPendingActionMaxPeople() const;
+    std::string getPendingActionName() const;
+    void showConversation(const std::string& leftActor, const std::string& rightActor,
+                          const std::string& leftSpeaker, const std::string& rightSpeaker,
+                          const std::string& leftText, const std::string& rightText);
     void farm();
+    void farmWithPeople(int people);
     void mine();
+    void mineWithPeople(int people);
     void recruitPeasant();
     void recruitSoldiers();
+    void recruitSoldiersWithPeople(int people);
     void attack();
+    void attackWithPeople(int people);
     void feedPeople();
 
 };

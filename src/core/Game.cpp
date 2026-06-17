@@ -7,12 +7,11 @@
 
 Game::Game(){
 
-    window = sf::RenderWindow(sf::VideoMode({1000, 700}), "Resource Kingdom");
+    window = sf::RenderWindow(sf::VideoMode({1300, 1000}), "Resource Kingdom");
     day = 1;
     enemyHealth = 1000;
-    message = "Welcome! Choose an action with the keyboard.";
-    showSprites = false;
-    activeSpriteGroup = -1;
+    //message = "Welcome! Choose an action with the keyboard.";
+    pendingAction = ManpowerAction::None;
 
     pugi::xml_document doc;
     if (auto result = doc.load_file("resources/init.xml"); !result) {
@@ -51,7 +50,9 @@ void Game::init() {
         message = "Font not found, but the game is running.";
     }
 
-    loadSprites();
+    dialogueScene.loadSprites();
+    dialogueScene.setSpeakers("Cyrano", "");
+    dialogueScene.setDialogue("What shall we do today?", "");
 }
 
 void Game::run() {
@@ -153,13 +154,13 @@ void Game::draw() {
     drawText("A: attack castle", 620, 315);
     drawText("Space: feed people", 620, 355);
     drawText("N: next day", 620, 395);
-    drawText("L: show/hide sprites", 620, 435);
 
-    if (showSprites) {
-        drawSprites();
+    dialogueScene.draw(window, font);
+    drawText(message, 70, 635, 20);
+
+    if (pendingAction != ManpowerAction::None) {
+        drawManpowerPopup();
     }
-
-    drawText(message, 70, 560, 20);
 
     if (enemyHealth <= 0) {
         drawText("Victory! The enemy castle has fallen.", 270, 480, 30);

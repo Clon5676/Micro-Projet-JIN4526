@@ -1,6 +1,7 @@
 
 #ifndef MICRO_PROJET_JIN4526_PEASENT_H
 #define MICRO_PROJET_JIN4526_PEASENT_H
+#include "Food.h"
 #include "Manpower.h"
 #include <string>
 
@@ -13,7 +14,10 @@ public:
     Peasents() = default;
 
     int action(int nbpeasents) override;
-    double getProductivity() {return productivity;}
+    int farm(int nbpeasents);
+    int mine(int nbpeasents);
+    bool recruit(Food& food);
+    double getProductivity() {return productivity;};
 };
 
 #endif //MICRO_PROJET_JIN4526_PEASENT_H

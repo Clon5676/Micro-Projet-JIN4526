@@ -13,6 +13,8 @@ protected:
     bool feed;
     int toRest;
 
+    int applyRandomVariation(int baseValue) const;
+
 public:
     Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral), feed(false), toRest(0) {};
     virtual ~Manpower() = default;
