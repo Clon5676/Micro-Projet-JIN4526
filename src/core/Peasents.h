@@ -13,7 +13,7 @@ public:
     Peasents() = default;
 
     int action(int nbpeasents) override;
-    double getProductivity() {return productivity;};
+    double getProductivity() {return productivity;}
 };
 
 #endif //MICRO_PROJET_JIN4526_PEASENT_H

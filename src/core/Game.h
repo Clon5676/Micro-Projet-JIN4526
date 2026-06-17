@@ -1,6 +1,6 @@
 #ifndef MICRO_PROJET_JIN4526_GAME_H
 #define MICRO_PROJET_JIN4526_GAME_H
-#include "Event.h"
+#include "GameEvent.h"
 #include "Food.h"
 #include "Materials.h"
 #include "Peasents.h"
@@ -9,6 +9,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+
+class GameEvent;
 
 class Game {
 public:
@@ -30,7 +32,7 @@ private:
     Materials materials;
     Soldiers soldiers;
     Peasents peasent;
-    Event event;
+    std::shared_ptr<GameEvent> event;
 
     int day;
     int enemyHealth;
@@ -45,6 +47,12 @@ public:
     void pause();
     void chooseEvent(const sf::Event& currentEvent);
     void showSpriteGroup(const std::string& groupName, Side side = Side::Center);
+    Food* getFood() {return &food;}
+    Materials* getMaterials() {return &materials;}
+    Soldiers* getSoldiers() {return &soldiers;}
+    Peasents* getPeasents() {return &peasent;}
+    int getEnemyHealth() {return enemyHealth;}
+    void setEnemyHealth(int newEnemyHeath) {enemyHealth = newEnemyHeath;}
 
 private:
     void updateDay();

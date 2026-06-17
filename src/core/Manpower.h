@@ -20,6 +20,7 @@ public:
     int getAvailable() const {return available;}
     int getHealth() const {return health;}
     double getMoral() const {return moral;}
+    void setAvailable(int newavailable) {available = newavailable;}
 
     void addPeople(int amount);
     bool usePeople(int amount);

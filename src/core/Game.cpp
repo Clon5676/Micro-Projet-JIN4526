@@ -1,9 +1,9 @@
 #include "Game.h"
-
 #include <iostream>
+#include <random>
 #include <sstream>
-
 #include "pugixml.hpp"
+#include "EventStrategy.h"
 
 Game::Game(){
 
@@ -40,7 +40,7 @@ Game::Game(){
         peasantsNode.attribute("health").as_int(),
         peasantsNode.attribute("moral").as_double(),
         peasantsNode.attribute("productivity").as_double());
-    event = Event(eventsNode.attribute("eventList").as_string());
+    event = std::make_shared<GameEvent>(eventsNode);
 
     init();
 }
@@ -111,13 +111,36 @@ void Game::updateDay() {
     day++;
     peasent.rest();
     soldiers.rest();
-    //feedPeople();
 
-    if (day % 3 == 0) {
-        materials.addQuantity(10);
-        message = event.activate(day) + " You found 10 materials.";
-    } else {
-        message = event.activate(day);
+    // if (day % 3 == 0) {
+    //     materials.addQuantity(10);
+    //     message = event.activate(day) + " You found 10 materials.";
+    // } else {
+    //     message = event.activate(day);
+    // }
+
+    std::random_device rd;  // Source de graine aléatoire
+    std::mt19937 gen(rd()); // Moteur initialisé avec une graine aléatoire
+
+    // 2. Définir la distribution (ici, entre 1 et 100)
+    int min = 1;
+    int max = 3;
+    std::uniform_int_distribution<> distrib(min, max);
+
+    // 3. Générer un nombre aléatoire
+    int random_number = distrib(gen);
+    std::shared_ptr<GameEvent> event;
+    if (random_number == min) {
+        event = this->event;
+    }
+    else if (random_number == max) {
+        event = this->event->getNextEvent()->getNextEvent();
+    }
+    else {
+        event = this->event->getNextEvent();
+    }
+    if (event) {
+        event->getEventStrategie()->activateEvent(this, event->getValue());
     }
 }
 
@@ -250,11 +273,8 @@ void Game::farm() {
 
 void Game::mine() {
     showSpriteGroup("heroes", Side::Left);
-    // const int gainedFood = peasent.action(50);
-    const int gainedMaterials = peasent.getAvailable();
+     const int gainedMaterials = peasent.action(50);
     materials.addQuantity(gainedMaterials);
-    // materials.addQuantity(gainedFood);
-    // message = "Peasants produced " + std::to_string(gainedFood) + " food.";
     message = "Peasants produced " + std::to_string(gainedMaterials) + " materials.";
 }
 
