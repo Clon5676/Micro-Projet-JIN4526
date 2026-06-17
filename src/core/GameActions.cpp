@@ -1,17 +1,34 @@
 #include "Game.h"
+#include <random>
+#include <sstream>
+#include "pugixml.hpp"
+#include "EventStrategy.h"
 
 void Game::updateDay() {
-    dialogueScene.clearActors();
     day++;
+
+    std::random_device rd;  // Source de graine aléatoire
+    std::mt19937 gen(rd()); // Moteur initialisé avec une graine aléatoire
+
+    // 2. Définir la distribution (ici, entre 1 et 7)
+    int min = 1;
+    int max = 7;
+    std::uniform_int_distribution<> distrib(min, max);
+
+    // 3. Générer un nombre aléatoire
+    int random_number = distrib(gen);
+    std::shared_ptr<GameEvent> event = this->event;
+
+    for (int i = 1; i < random_number; i++) {
+        event = event->getNextEvent();
+    }
+
+    event->getEventStrategie()->activateEvent(this, event->getValue());
+
+    message = event->getEffect();
+
     peasent.rest();
     soldiers.rest();
-
-    if (day % 3 == 0) {
-        materials.addQuantity(10);
-        message = event.activate(day) + " You found 10 materials.";
-    } else {
-        message = event.activate(day);
-    }
 }
 
 void Game::showConversation(const std::string& leftActor, const std::string& rightActor,
