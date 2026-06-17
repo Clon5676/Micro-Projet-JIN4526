@@ -38,7 +38,6 @@ public:
     void run();
     void pause();
     void chooseEvent(const sf::Event& currentEvent);
-    void showSpriteGroup(const std::string& groupName, Side side = Side::Center);
     Food* getFood() {return &food;}
     Materials* getMaterials() {return &materials;}
     Soldiers* getSoldiers() {return &soldiers;}
