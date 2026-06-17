@@ -109,39 +109,29 @@ void Game::chooseEvent(const sf::Event& currentEvent) {
 
 void Game::updateDay() {
     day++;
-    peasent.rest();
-    soldiers.rest();
-
-    // if (day % 3 == 0) {
-    //     materials.addQuantity(10);
-    //     message = event.activate(day) + " You found 10 materials.";
-    // } else {
-    //     message = event.activate(day);
-    // }
 
     std::random_device rd;  // Source de graine aléatoire
     std::mt19937 gen(rd()); // Moteur initialisé avec une graine aléatoire
 
-    // 2. Définir la distribution (ici, entre 1 et 100)
+    // 2. Définir la distribution (ici, entre 1 et 7)
     int min = 1;
-    int max = 3;
+    int max = 7;
     std::uniform_int_distribution<> distrib(min, max);
 
     // 3. Générer un nombre aléatoire
     int random_number = distrib(gen);
-    std::shared_ptr<GameEvent> event;
-    if (random_number == min) {
-        event = this->event;
+    std::shared_ptr<GameEvent> event = this->event;
+
+    for (int i = 1; i < random_number; i++) {
+        event = event->getNextEvent();
     }
-    else if (random_number == max) {
-        event = this->event->getNextEvent()->getNextEvent();
-    }
-    else {
-        event = this->event->getNextEvent();
-    }
-    if (event) {
-        event->getEventStrategie()->activateEvent(this, event->getValue());
-    }
+
+    event->getEventStrategie()->activateEvent(this, event->getValue());
+
+    message = event->getEffect();
+
+    peasent.rest();
+    soldiers.rest();
 }
 
 void Game::draw() {

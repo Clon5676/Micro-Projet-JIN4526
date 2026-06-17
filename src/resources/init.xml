@@ -5,7 +5,11 @@
     <Soldiers quantity="50" sprite="SoldierSprite.png" available="50" health="100" moral="1" strength="1"/>
     <Peasents quantity="50" sprite="PeasentSprite.png" available="50" health="100" moral="1" productivity="1"/>
     <Events value="25" effect="You found 25 Materials" strategy="MaterialsEventStrategy">
-        <Event value="10" effect="10 peasents are sick today" strategy="PeasentAvailableEventStrategy"/>
+        <Event value="-10" effect="10 peasents are sick today" strategy="PeasentAvailableEventStrategy"/>
         <Event value="-50" effect="The enemies stole 50 Food" strategy="FoodEventStrategy"/>
+        <Event value="200" effect="The Castle build new fortifications and heal for 200 health" strategy="EnemyHealthEventStrategy"/>
+        <Event value="-1000" effect="Your soldiers are too tired to work today" strategy="SoldierAvailableEventStrategy"/>
+        <Event value="20" effect="20 New peasents join your cause" strategy="PeasentEventStrategy"/>
+        <Event value="-10" effect="An enemy attack killed 10 soldiers" strategy="SoldierEventStrategy"/>
     </Events>
 </Game>

@@ -14,6 +14,14 @@ add_library(lib_core
         PeasentAvailableEventStrategy.h
         PeasentAvailableEventStrategy.cpp
         EventStrategyFactory.h
+        PeasentEventStrategy.h
+        PeasentEventStrategy.cpp
+        SoldierEventStrategy.h
+        SoldierEventStrategy.cpp
+        SoldierAvailableEventStrategy.h
+        SoldierAvailableEventStrategy.cpp
+        EnemyHealthEventStrategy.h
+        EnemyHealthEventStrategy.cpp
 )
 
 target_include_directories(lib_core PUBLIC ./)
