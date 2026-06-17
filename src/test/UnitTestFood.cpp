@@ -6,7 +6,7 @@ class MyFixture : public ::testing::Test {
   protected:
 
       void SetUp() override {
-          food = Food(100, "fichier.png");
+          food = Food(100);
       }
 
       void TearDown() override {
@@ -17,7 +17,7 @@ class MyFixture : public ::testing::Test {
 };
 
 TEST(Food, constructor) {
-    Food food = Food(100, "fichier.png");
+    Food food = Food(100);
 
     ASSERT_EQ(100, food.getQuantity());
     ASSERT_EQ("Food", food.getName());

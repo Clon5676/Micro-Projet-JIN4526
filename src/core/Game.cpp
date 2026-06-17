@@ -23,8 +23,8 @@ Game::Game(){
     pugi::xml_node soldiersNode = game.child("Soldiers");
     pugi::xml_node eventsNode = game.child("Events");
 
-    food = Food(foodNode.attribute("quantity").as_int(), foodNode.attribute("sprite").as_string());
-    materials = Materials(materialsNode.attribute("quantity").as_int(), materialsNode.attribute("sprite").as_string());
+    food = Food(foodNode.attribute("quantity").as_int());
+    materials = Materials(materialsNode.attribute("quantity").as_int());
     stockpile = ResourcePackage("Stockpile");
     stockpile.add(food);
     stockpile.add(materials);

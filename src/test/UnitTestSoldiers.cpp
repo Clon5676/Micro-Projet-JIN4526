@@ -35,16 +35,16 @@ TEST(Soldiers, actionFailsWhenNotEnoughPeopleAreAvailable) {
 }
 
 TEST(Soldiers, getMaxRecruitableUsesScarcestResource) {
-    Food food = Food(45, "Food.png");
-    Materials materials = Materials(30, "Materials.png");
+    Food food = Food(45);
+    Materials materials = Materials(30);
     Soldiers soldiers = Soldiers(5, "Soldier.png", 5, 100, 1.0, 1.0);
 
     ASSERT_EQ(2, soldiers.getMaxRecruitable(food, materials));
 }
 
 TEST(Soldiers, recruitSpendsFoodAndMaterialsAndAddsSoldiers) {
-    Food food = Food(45, "Food.png");
-    Materials materials = Materials(45, "Materials.png");
+    Food food = Food(45);
+    Materials materials = Materials(45);
     Soldiers soldiers = Soldiers(5, "Soldier.png", 5, 100, 1.0, 1.0);
 
     ASSERT_TRUE(soldiers.recruit(food, materials, 2));
@@ -56,8 +56,8 @@ TEST(Soldiers, recruitSpendsFoodAndMaterialsAndAddsSoldiers) {
 }
 
 TEST(Soldiers, recruitFailsForInvalidOrUnaffordableAmount) {
-    Food food = Food(15, "Food.png");
-    Materials materials = Materials(15, "Materials.png");
+    Food food = Food(15);
+    Materials materials = Materials(15);
     Soldiers soldiers = Soldiers(5, "Soldier.png", 5, 100, 1.0, 1.0);
 
     ASSERT_FALSE(soldiers.recruit(food, materials, 0));

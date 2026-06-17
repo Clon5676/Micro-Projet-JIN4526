@@ -8,6 +8,7 @@ add_executable(unitTests
         UnitTestEvent.cpp
         UnitTestFood.cpp
         UnitTestManpower.cpp
+        UnitTestMaterials.cpp
         UnitTestPeasents.cpp
         UnitTestResourcePackage.cpp
         UnitTestSoldiers.cpp

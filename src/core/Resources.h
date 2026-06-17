@@ -9,11 +9,10 @@
 class Resources : public ResourceComponent {
 protected:
     int quantity;
-    std::string sprite;
     std::string name;
 
 public:
-    Resources(int startQuantity, const std::string spriteName, const std::string resourceName = "Resource");
+    Resources(int startQuantity, const std::string resourceName = "Resource");
     Resources() = default;
 
     std::string getName() const override;

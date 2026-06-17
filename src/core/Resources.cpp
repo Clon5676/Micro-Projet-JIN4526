@@ -1,7 +1,7 @@
 #include "Resources.h"
 
-Resources::Resources(int startQuantity, const std::string spriteName, const std::string resourceName)
-    : quantity(startQuantity), sprite(spriteName), name(resourceName) {
+Resources::Resources(int startQuantity, const std::string resourceName)
+    : quantity(startQuantity), name(resourceName) {
 }
 
 std::string Resources::getName() const {

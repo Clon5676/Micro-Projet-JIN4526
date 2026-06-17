@@ -12,8 +12,8 @@ TEST(ResourcePackage, constructorUsesProvidedName) {
 }
 
 TEST(ResourcePackage, getQuantitySumsAllChildren) {
-    Food food = Food(25, "Food.png");
-    Materials materials = Materials(75, "Materials.png");
+    Food food = Food(25);
+    Materials materials = Materials(75);
     ResourcePackage stockpile("Stockpile");
 
     stockpile.add(food);
@@ -23,8 +23,8 @@ TEST(ResourcePackage, getQuantitySumsAllChildren) {
 }
 
 TEST(ResourcePackage, setQuantityAndAddQuantityAffectFirstChildOnly) {
-    Food food = Food(25, "Food.png");
-    Materials materials = Materials(75, "Materials.png");
+    Food food = Food(25);
+    Materials materials = Materials(75);
     ResourcePackage stockpile("Stockpile");
 
     stockpile.add(food);
@@ -41,8 +41,8 @@ TEST(ResourcePackage, setQuantityAndAddQuantityAffectFirstChildOnly) {
 }
 
 TEST(ResourcePackage, spendConsumesChildrenInOrder) {
-    Food food = Food(25, "Food.png");
-    Materials materials = Materials(75, "Materials.png");
+    Food food = Food(25);
+    Materials materials = Materials(75);
     ResourcePackage stockpile("Stockpile");
 
     stockpile.add(food);
@@ -56,8 +56,8 @@ TEST(ResourcePackage, spendConsumesChildrenInOrder) {
 }
 
 TEST(ResourcePackage, spendFailsWithoutChangingChildrenWhenAmountIsInvalidOrTooHigh) {
-    Food food = Food(25, "Food.png");
-    Materials materials = Materials(75, "Materials.png");
+    Food food = Food(25);
+    Materials materials = Materials(75);
     ResourcePackage stockpile("Stockpile");
 
     stockpile.add(food);
@@ -71,7 +71,7 @@ TEST(ResourcePackage, spendFailsWithoutChangingChildrenWhenAmountIsInvalidOrTooH
 }
 
 TEST(ResourcePackage, clearRemovesChildrenFromTotal) {
-    Food food = Food(25, "Food.png");
+    Food food = Food(25);
     ResourcePackage stockpile("Stockpile");
 
     stockpile.add(food);

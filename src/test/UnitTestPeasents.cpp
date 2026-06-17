@@ -48,7 +48,7 @@ TEST(Peasents, actionFailsWhenNotEnoughPeopleAreAvailable) {
 }
 
 TEST(Peasents, recruitSpendsFoodAndAddsOneAvailablePeasant) {
-    Food food = Food(20, "Food.png");
+    Food food = Food(20);
     Peasents peasents = Peasents(2, "Peasent.png", 2, 100, 1.0, 1.0);
 
     ASSERT_TRUE(peasents.recruit(food));
@@ -59,7 +59,7 @@ TEST(Peasents, recruitSpendsFoodAndAddsOneAvailablePeasant) {
 }
 
 TEST(Peasents, recruitFailsWithoutEnoughFood) {
-    Food food = Food(19, "Food.png");
+    Food food = Food(19);
     Peasents peasents = Peasents(2, "Peasent.png", 2, 100, 1.0, 1.0);
 
     ASSERT_FALSE(peasents.recruit(food));
