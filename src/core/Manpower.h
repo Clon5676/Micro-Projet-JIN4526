@@ -11,17 +11,21 @@ protected:
     int health;
     double moral;
     bool feed;
+    int toRest;
 
     int applyRandomVariation(int baseValue) const;
 
 public:
-    Manpower(int quantity, const std::string&, int available, int health, double moral) : Resources(quantity, "Manpower"), available(available), health(health), moral(moral), feed(false) {};
+    Manpower(int quantity, const std::string sprite, int available, int health, double moral) : Resources(quantity, sprite), available(available), health(health), moral(moral), feed(false), toRest(0) {};
+
     virtual ~Manpower() = default;
     Manpower() = default;
 
     int getAvailable() const {return available;}
     int getHealth() const {return health;}
     double getMoral() const {return moral;}
+    void setAvailable(int newavailable) {available = newavailable;}
+    void setToRest(int newtorest) {toRest = newtorest;}
 
     void addPeople(int amount);
     bool usePeople(int amount);

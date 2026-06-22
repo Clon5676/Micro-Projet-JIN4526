@@ -1,8 +1,6 @@
 #include "Game.h"
-
 #include <iostream>
 
-#include "pugixml.hpp"
 
 Game::Game(){
 
@@ -40,7 +38,7 @@ Game::Game(){
         peasantsNode.attribute("health").as_int(),
         peasantsNode.attribute("moral").as_double(),
         peasantsNode.attribute("productivity").as_double());
-    event = Event(eventsNode.attribute("eventList").as_string());
+    event = std::make_shared<GameEvent>(eventsNode);
 
     init();
 }
