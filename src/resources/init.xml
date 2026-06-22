@@ -19,6 +19,8 @@
         <Event value="-20" effect="Enemies poisoned some food, you lost 20 food" strategy="FoodEventStrategy"/>
         <Event value="-10" effect="Enemy burned some supplies, you lost 10 materials" strategy="MaterialsEventStrategy"/>
         <Event value="0" effect="You spot a cute dog in the distance" strategy="SoldierEventStrategy"/>
+        <Event value="0" effect="You wrote a letter to Roxane" strategy="SoldierEventStrategy"/>
+        <Event value="0" effect="You clean you nose throughly" strategy="SoldierEventStrategy"/>
       
     </Events>
 </Game>
