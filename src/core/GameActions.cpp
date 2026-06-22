@@ -7,21 +7,12 @@
 void Game::updateDay() {
     day++;
 
-    std::random_device rd;  // Source de graine aléatoire
-    std::mt19937 gen(rd()); // Moteur initialisé avec une graine aléatoire
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
 
-    // 2. Définir la distribution (ici, entre 1 et 7)
-    int min = 1;
-    int max = 7;
-    std::uniform_int_distribution<> distrib(min, max);
+    std::uniform_int_distribution<> distrib(0, this->event->countEvents() - 1);
 
-    // 3. Générer un nombre aléatoire
-    int random_number = distrib(gen);
-    std::shared_ptr<GameEvent> event = this->event;
-
-    for (int i = 1; i < random_number; i++) {
-        event = event->getNextEvent();
-    }
+    std::shared_ptr<GameEvent> event = this->event->getEventAt(distrib(gen));
 
     event->getEventStrategie()->activateEvent(this, event->getValue());
 
@@ -133,7 +124,7 @@ void Game::feedPeople() {
         showConversation("heroes", "peasants", "Cyrano", "Peasant",
             "Tonight, everyone eats.", "Morale will rise after rest.");
     } else {
-        message = "Not enough food. Morale system will be added next.";
+        message = "Not enough food. Need more to feed everyone";
         showConversation("heroes", "peasants", "Cyrano", "Peasant",
             "Can we feed everyone?", "No. The stores are too low.");
     }

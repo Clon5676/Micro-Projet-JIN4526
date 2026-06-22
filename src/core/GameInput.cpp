@@ -1,12 +1,19 @@
 #include "Game.h"
 
 void Game::chooseEvent(const sf::Event& currentEvent) {
+    const auto* keyPressed = currentEvent.getIf<sf::Event::KeyPressed>();
+    if (gameOver) {
+        if (keyPressed != nullptr && keyPressed->code == sf::Keyboard::Key::Escape) {
+            window.close();
+        }
+        return;
+    }
+
     if (pendingAction != ManpowerAction::None) {
         handleManpowerInput(currentEvent);
         return;
     }
 
-    const auto* keyPressed = currentEvent.getIf<sf::Event::KeyPressed>();
     if (keyPressed == nullptr) {
         return;
     }

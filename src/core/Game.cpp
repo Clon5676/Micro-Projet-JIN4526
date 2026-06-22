@@ -1,6 +1,15 @@
 #include "Game.h"
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
+namespace {
+std::string formatMorale(double morale) {
+    std::ostringstream stream;
+    stream << std::fixed << std::setprecision(1) << morale;
+    return stream.str();
+}
+}
 
 Game::Game(){
 
@@ -8,6 +17,7 @@ Game::Game(){
     day = 1;
     enemyHealth = 1000;
     pendingAction = ManpowerAction::None;
+    gameOver = false;
 
     pugi::xml_document doc;
     if (auto result = doc.load_file("resources/init.xml"); !result) {
@@ -73,6 +83,8 @@ void Game::pause() {
 }
 
 void Game::draw() {
+    checkLossCondition();
+
     window.clear(sf::Color(30, 35, 42));
 
     drawText("Resource Kingdom", 40, 30, 36);
@@ -83,7 +95,9 @@ void Game::draw() {
     drawText("Stockpile total: " + std::to_string(stockpile.getQuantity()), 70, 235);
     drawText("Peasants: " + std::to_string(peasent.getQuantity()) + " available: " + std::to_string(peasent.getAvailable()), 70, 275);
     drawText("Soldiers: " + std::to_string(soldiers.getQuantity()) + " available: " + std::to_string(soldiers.getAvailable()), 70, 315);
-    drawText("Enemy castle health: " + std::to_string(enemyHealth), 70, 355);
+    drawText("Peasant morale: " + formatMorale(peasent.getMoral()), 70, 355);
+    drawText("Soldier morale: " + formatMorale(soldiers.getMoral()), 70, 395);
+    drawText("Enemy castle health: " + std::to_string(enemyHealth), 70, 435);
 
     drawText("F: farm food", 620, 155);
     drawText("M: mine materials", 620, 195);
@@ -98,6 +112,10 @@ void Game::draw() {
 
     if (pendingAction != ManpowerAction::None) {
         drawManpowerPopup();
+    }
+
+    if (gameOver) {
+        drawGameOverPopup();
     }
 
     if (enemyHealth <= 0) {
@@ -116,4 +134,35 @@ void Game::drawText(const std::string& text, float x, float y, unsigned int size
     drawableText.setPosition({x, y});
     drawableText.setFillColor(sf::Color(235, 238, 242));
     window.draw(drawableText);
+}
+
+void Game::checkLossCondition() {
+    if (gameOver) {
+        return;
+    }
+
+    if (peasent.getQuantity() <= 0 || soldiers.getQuantity() <= 0) {
+        gameOver = true;
+        pendingAction = ManpowerAction::None;
+        manpowerInput = "";
+        message = "The siege has failed.";
+    }
+}
+
+void Game::drawGameOverPopup() {
+    sf::RectangleShape overlay({1300.f, 1000.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 145));
+    window.draw(overlay);
+
+    sf::RectangleShape popup({900.f, 280.f});
+    popup.setPosition({200.f, 350.f});
+    popup.setFillColor(sf::Color(53, 38, 44));
+    popup.setOutlineColor(sf::Color(210, 78, 78));
+    popup.setOutlineThickness(4.f);
+    window.draw(popup);
+
+    drawText("It seems you ran out of people to keep the siege,", 245, 390, 25);
+    drawText("The spanish army is victorious!", 245, 445, 30);
+    drawText("And more importantly, you will never see Roxane again!", 245, 505, 25);
+    drawText("Press Escape to exit", 245, 565, 20);
 }

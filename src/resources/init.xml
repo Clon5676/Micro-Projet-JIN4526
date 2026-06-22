@@ -11,5 +11,14 @@
         <Event value="-1000" effect="Your soldiers are too tired to work today" strategy="SoldierAvailableEventStrategy"/>
         <Event value="20" effect="20 New peasents join your cause" strategy="PeasentEventStrategy"/>
         <Event value="-10" effect="An enemy attack killed 10 soldiers" strategy="SoldierEventStrategy"/>
+        <Event value="0" effect="The day is cloudy" strategy="FoodEventStrategy"/>
+        <Event value="15" effect="Your soldiers hunted some game, 15 food added" strategy="FoodEventStrategy"/>
+        <Event value="0" effect="The day is sunny" strategy="FoodEventStrategy"/>
+        <Event value="5" effect="5 herrand soldiers join your cause" strategy="SoldierEventStrategy"/>
+        <Event value="-50" effect="A Storm hit the enemy castle for 50 damage" strategy="EnemyHealthEventStrategy"/>
+        <Event value="-20" effect="Enemies poisoned some food, you lost 20 food" strategy="FoodEventStrategy"/>
+        <Event value="-10" effect="Enemy burned some supplies, you lost 10 materials" strategy="MaterialsEventStrategy"/>
+        <Event value="0" effect="You spot a cute dog in the distance" strategy="SoldierEventStrategy"/>
+      
     </Events>
 </Game>

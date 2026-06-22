@@ -25,6 +25,8 @@ public:
     int getValue() { return value;}
     std::string getEffect() { return effect;}
     std::shared_ptr<EventStrategy> getEventStrategie() { return eventstrategie;}
+    int countEvents() const;
+    std::shared_ptr<GameEvent> getEventAt(int index);
 };
 
 #endif //MICRO_PROJET_JIN4526_EVENT_H

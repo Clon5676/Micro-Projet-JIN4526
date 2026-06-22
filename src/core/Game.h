@@ -33,6 +33,7 @@ private:
     std::string message;
     ManpowerAction pendingAction;
     std::string manpowerInput;
+    bool gameOver;
 
 public:
     Game();
@@ -53,6 +54,8 @@ private:
     void drawText(const std::string& text, float x, float y, unsigned int 
         = 22);
     void drawManpowerPopup();
+    void drawGameOverPopup();
+    void checkLossCondition();
     void startManpowerChoice(ManpowerAction action);
     void confirmManpowerChoice();
     void cancelManpowerChoice();

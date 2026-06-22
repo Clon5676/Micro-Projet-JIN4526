@@ -24,3 +24,35 @@ GameEvent::GameEvent(std::shared_ptr<GameEvent> nextEvent, int value, std::strin
     this->effect = effect;
     this->eventstrategie = EventStrategyFactory::create(eventstrategie);
 }
+
+int GameEvent::countEvents() const {
+    int count = 1;
+    std::shared_ptr<GameEvent> currentEvent = nextEvent;
+
+    while (currentEvent != nullptr) {
+        count++;
+        currentEvent = currentEvent->nextEvent;
+    }
+
+    return count;
+}
+
+std::shared_ptr<GameEvent> GameEvent::getEventAt(int index) {
+    if (index <= 0) {
+        return std::make_shared<GameEvent>(*this);
+    }
+
+    std::shared_ptr<GameEvent> currentEvent = nextEvent;
+    int currentIndex = 1;
+
+    while (currentEvent != nullptr && currentIndex < index) {
+        currentEvent = currentEvent->nextEvent;
+        currentIndex++;
+    }
+
+    if (currentEvent == nullptr) {
+        return std::make_shared<GameEvent>(*this);
+    }
+
+    return currentEvent;
+}
